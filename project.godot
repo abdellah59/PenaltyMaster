@@ -15,6 +15,10 @@ run/main_scene="uid://cdxk02lehbo7d"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GameAutoload="*res://Scripts/Autoload/GameAutoload.cs"
+
 [dotnet]
 
 project/assembly_name="PenaltyMaster"

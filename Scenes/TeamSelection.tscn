@@ -1,3 +1,98 @@
-[gd_scene format=3 uid="uid://dr333ijkblheh"]
+[gd_scene load_steps=3 format=3 uid="uid://dr333ijkblheh"]
 
-[node name="TeamSelection" type="Node2D"]
+[ext_resource type="Script" uid="uid://ht0ly01mjegu" path="res://Scripts/UI/TeamSelectionUI.cs" id="1_q3i6s"]
+[ext_resource type="Texture2D" uid="uid://dkqyy3qc5e6ho" path="res://Assets/MainMenu/Terrain-TeamSelectionBackground.jpg" id="2_stu7j"]
+
+[node name="TeamSelection" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 503.0
+offset_top = 207.0
+offset_right = 503.0
+offset_bottom = 207.0
+
+[node name="TeamSelectionUI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_q3i6s")
+
+[node name="Background" type="TextureRect" parent="TeamSelectionUI"]
+layout_mode = 0
+offset_left = -405.0
+offset_top = -140.0
+offset_right = 555.0
+offset_bottom = 340.0
+texture = ExtResource("2_stu7j")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TeamSelectionUI"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TitleLabel" type="Label" parent="TeamSelectionUI/VBoxContainer"]
+layout_mode = 2
+text = "Sélection des équipes"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TeamSelectionUI/VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayerTeamPanel" type="Panel" parent="TeamSelectionUI/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/PlayerTeamPanel"]
+layout_mode = 2
+offset_right = 100.0
+offset_bottom = 23.0
+text = "Votre équipe"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/PlayerTeamPanel"]
+layout_mode = 2
+offset_top = 27.0
+offset_right = 100.0
+offset_bottom = 27.0
+
+[node name="GridContainer" type="GridContainer" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/PlayerTeamPanel/ScrollContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="SelectedTeamLabel" type="Label" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/PlayerTeamPanel"]
+layout_mode = 2
+offset_top = 31.0
+offset_right = 100.0
+offset_bottom = 54.0
+
+[node name="OpponentTeamPanel" type="Panel" parent="TeamSelectionUI/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/OpponentTeamPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Équipe adverse"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/OpponentTeamPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scroll_horizontal_custom_step = 1.0
+
+[node name="GridContainer" type="GridContainer" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/OpponentTeamPanel/ScrollContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="SelectedTeamLabel" type="Label" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/OpponentTeamPanel"]
+layout_mode = 2
+offset_right = 154.0
+offset_bottom = 23.0
+text = "SelectedTeamLabel "
+
+[node name="StartGameButton" type="Button" parent="TeamSelectionUI/VBoxContainer"]
+layout_mode = 2
+text = " Démarrer la partie"

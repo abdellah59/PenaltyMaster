@@ -1,3 +1,52 @@
-[gd_scene format=3 uid="uid://g1vfoahq1gke"]
+[gd_scene load_steps=3 format=3 uid="uid://g1vfoahq1gke"]
+
+[ext_resource type="Script" uid="uid://ciukvhsu112vq" path="res://Scripts/UI/MainMenu.cs" id="1_idj7w"]
+[ext_resource type="Texture2D" uid="uid://rh5db8htfsnj" path="res://Assets/MainMenu/Terrain-MainMenuBackground.jpg" id="2_kln2b"]
 
 [node name="Main" type="Node2D"]
+position = Vector2(580, 283)
+
+[node name="MainMenu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_idj7w")
+
+[node name="Background" type="TextureRect" parent="MainMenu"]
+layout_mode = 0
+offset_left = -444.0
+offset_top = -254.0
+offset_right = 456.0
+offset_bottom = 346.0
+texture = ExtResource("2_kln2b")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="MainMenu/VBoxContainer"]
+layout_mode = 2
+text = "Jeu de Tir au But"
+horizontal_alignment = 1
+
+[node name="PlayButton" type="Button" parent="MainMenu/VBoxContainer"]
+layout_mode = 2
+text = "Jouer"
+script = ExtResource("1_idj7w")
+
+[node name="QuitButton" type="Button" parent="MainMenu/VBoxContainer"]
+layout_mode = 2
+text = "Quitter"

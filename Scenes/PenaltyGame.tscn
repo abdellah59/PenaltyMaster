@@ -1,3 +1,82 @@
-[gd_scene format=3 uid="uid://5l3yh3idq2ll"]
+[gd_scene load_steps=12 format=3 uid="uid://5l3yh3idq2ll"]
 
-[node name="PenaltyGame" type="Node2D"]
+[ext_resource type="Script" uid="uid://s6d1q4d4edue" path="res://Scripts/GamePlay/PenaltyGameController.cs" id="1_xunwj"]
+[ext_resource type="Texture2D" uid="uid://ckbggtolntycv" path="res://Assets/MainMenu/TerrainGoal-PenaltyGameBackground.jpg" id="2_xunwj"]
+[ext_resource type="Script" uid="uid://cfxax4tocbdtx" path="res://Scripts/GamePlay/Ball.cs" id="3_apvd0"]
+[ext_resource type="Texture2D" uid="uid://c1frg371v6inm" path="res://Assets/Soccer-Ball-PNG-Photo.png" id="4_brpm0"]
+[ext_resource type="Script" uid="uid://bmarixk4dbwgk" path="res://Scripts/GamePlay/PenaltyShooter.cs" id="5_wk84t"]
+[ext_resource type="Script" uid="uid://8wbnthllcbf8" path="res://Scripts/GamePlay/GoalKeeper.cs" id="6_xndba"]
+[ext_resource type="Script" uid="uid://erv1sq5gd6o2" path="res://Scripts/AI/OpponentAI.cs" id="7_xndba"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vurjv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wk84t"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xndba"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qdi83"]
+
+[node name="PenaltyGame" type="Node2D" groups=["players"]]
+position = Vector2(620, 309)
+script = ExtResource("1_xunwj")
+
+[node name="BAckground" type="Sprite2D" parent="."]
+texture = ExtResource("2_xunwj")
+
+[node name="Goal" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Goal"]
+
+[node name="GoalArea" type="Area2D" parent="Goal" groups=["goal"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goal/GoalArea"]
+scale = Vector2(20, 10)
+shape = SubResource("RectangleShape2D_vurjv")
+
+[node name="PenaltySpot" type="Area2D" parent="."]
+position = Vector2(0, 150)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PenaltySpot"]
+scale = Vector2(20, 5)
+shape = SubResource("RectangleShape2D_wk84t")
+
+[node name="Ball" type="RigidBody2D" parent="."]
+mass = 0.1
+script = ExtResource("3_apvd0")
+
+[node name="Sprite2D" type="Sprite2D" parent="Ball"]
+position = Vector2(-1, 169.75)
+scale = Vector2(0.0439453, 0.0410156)
+texture = ExtResource("4_brpm0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ball"]
+position = Vector2(0, 170)
+scale = Vector2(3, 3)
+shape = SubResource("CircleShape2D_xndba")
+
+[node name="PlayerShooter" type="Node2D" parent="."]
+position = Vector2(1, -1)
+script = ExtResource("5_wk84t")
+
+[node name="Sprite2D" type="Sprite2D" parent="PlayerShooter"]
+
+[node name="AimLine" type="Line2D" parent="PlayerShooter"]
+width = 3.0
+
+[node name="PowerBar" type="ProgressBar" parent="PlayerShooter"]
+offset_right = 4.0
+offset_bottom = 27.0
+metadata/_edit_use_anchors_ = true
+
+[node name="GoalKeeper" type="CharacterBody2D" parent="."]
+script = ExtResource("6_xndba")
+
+[node name="Sprite2D" type="Sprite2D" parent="GoalKeeper"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GoalKeeper"]
+shape = SubResource("CapsuleShape2D_qdi83")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="GoalKeeper"]
+
+[node name="OpponentAI" type="Node" parent="."]
+script = ExtResource("7_xndba")

@@ -45,8 +45,12 @@ horizontal_alignment = 1
 [node name="PlayButton" type="Button" parent="MainMenu/VBoxContainer"]
 layout_mode = 2
 text = "Jouer"
-script = ExtResource("1_idj7w")
 
 [node name="QuitButton" type="Button" parent="MainMenu/VBoxContainer"]
 layout_mode = 2
 text = "Quitter"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(-1, 37)
+scale = Vector2(0.704016, 1.20028)
+zoom = Vector2(1.58, 1.58)

@@ -22,7 +22,9 @@ public partial class PenaltyShooter : Node2D
         powerBar = GetNode<ProgressBar>("PowerBar");
         
         powerBar.MaxValue = maxPower;
-        SetCanShoot(false);
+        powerBar.Value = 0;
+        
+        GD.Print("PenaltyShooter prêt");
     }
 
     public override void _Input(InputEvent @event)
@@ -37,11 +39,11 @@ public partial class PenaltyShooter : Node2D
         {
             if (mouseButton.ButtonIndex == MouseButton.Left)
             {
-                if (mouseButton.Pressed)
+                if (mouseButton.Pressed && !chargingPower)
                 {
                     StartChargingPower();
                 }
-                else
+                else if (!mouseButton.Pressed && chargingPower)
                 {
                     Shoot();
                 }
@@ -51,16 +53,20 @@ public partial class PenaltyShooter : Node2D
 
     public override void _Process(double delta)
     {
-        if (chargingPower)
+        if (chargingPower && canShoot)
         {
             currentPower += powerIncreaseSpeed * (float)delta;
             currentPower = Mathf.Clamp(currentPower, 0, maxPower);
             powerBar.Value = currentPower;
+            
+            GD.Print($"Power charging: {currentPower}");
         }
     }
 
     private void UpdateAim(Vector2 mousePosition)
     {
+        if (!canShoot) return;
+        
         Vector2 worldMousePos = GetGlobalMousePosition();
         aimDirection = (worldMousePos - GlobalPosition).Normalized();
         
@@ -68,24 +74,40 @@ public partial class PenaltyShooter : Node2D
         aimLine.ClearPoints();
         aimLine.AddPoint(Vector2.Zero);
         aimLine.AddPoint(aimDirection * 100);
+        
+        // Changer la couleur de la ligne
+        aimLine.DefaultColor = Colors.Red;
     }
 
     private void StartChargingPower()
     {
+        GD.Print("Start charging power");
         chargingPower = true;
         currentPower = 0.0f;
+        powerBar.Value = 0.0f;
     }
 
     private void Shoot()
     {
-        if (!chargingPower) return;
+        if (!chargingPower || !canShoot) return;
         
+        GD.Print($"SHOOTING! Direction: {aimDirection}, Power: {currentPower}");
+        
+        // Arrêter le chargement
         chargingPower = false;
-        SetCanShoot(false);
         
+        // Émettre le signal avec les bonnes valeurs
         EmitSignal(SignalName.ShotTaken, aimDirection, currentPower);
         
-        // Reset
+        // Désactiver temporairement
+        SetCanShoot(false);
+        
+        // Reset l'interface
+        ResetUI();
+    }
+
+    private void ResetUI()
+    {
         currentPower = 0.0f;
         powerBar.Value = 0.0f;
         aimLine.ClearPoints();
@@ -95,5 +117,13 @@ public partial class PenaltyShooter : Node2D
     {
         canShoot = value;
         Visible = value;
+        
+        if (!value)
+        {
+            chargingPower = false;
+            ResetUI();
+        }
+        
+        GD.Print($"Can shoot set to: {value}");
     }
 }

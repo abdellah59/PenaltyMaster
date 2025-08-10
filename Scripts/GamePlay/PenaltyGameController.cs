@@ -27,53 +27,168 @@ public partial class PenaltyGameController : Node2D
         InitializeReferences();
         ConnectSignals();
         SetupGame();
+
+        GetTree().CreateTimer(1.0f).Timeout += () =>
+        {
+            waitingForInput = true;
+            playerShooter.SetCanShoot(true);
+            GD.Print("Debug: Force enabled shooting mode");
+        };
+        
     }
 
     private void InitializeReferences()
+{
+    GD.Print("=== INITIALISATION DES RÉFÉRENCES ===");
+
+    // Player shooter
+    playerShooter = GetNodeOrNull<PenaltyShooter>("PlayerShooter");
+    if (playerShooter == null)
+        GD.PrintErr("[ERREUR] PlayerShooter introuvable !");
+    else
+        GD.Print($"[OK] PlayerShooter trouvé : {playerShooter.GetPath()}");
+
+    // Player goalkeeper
+    playerGoalkeeper = GetNodeOrNull<Goalkeeper>("PlayerGoalkeeper");
+    if (playerGoalkeeper == null)
+        GD.PrintErr("[ERREUR] PlayerGoalkeeper introuvable !");
+    else
+        GD.Print($"[OK] PlayerGoalkeeper trouvé : {playerGoalkeeper.GetPath()}");
+
+    // Ball
+    gameBall = GetNodeOrNull<Ball>("Ball"); // ⚠️ Mets le bon chemin ici si elle est dans un sous-nœud
+    if (gameBall == null)
+        GD.PrintErr("[ERREUR] Ball introuvable ! Vérifie le chemin dans InitializeReferences()");
+    else
+        GD.Print($"[OK] Ball trouvée : {gameBall.GetPath()}");
+
+    // UI
+    gameUI = GetNodeOrNull<GameUI>("UI/GameUI");
+    if (gameUI == null)
+        GD.PrintErr("[ERREUR] GameUI introuvable !");
+    else
+        GD.Print($"[OK] GameUI trouvée : {gameUI.GetPath()}");
+
+    // Opponent AI
+    opponentAI = GetNodeOrNull<OpponentAI>("OpponentAI");
+    if (opponentAI == null)
+        GD.PrintErr("[ERREUR] OpponentAI introuvable !");
+    else
+        GD.Print($"[OK] OpponentAI trouvé : {opponentAI.GetPath()}");
+
+    // Goal Area
+    goalArea = GetNodeOrNull<Area2D>("Goal/GoalArea");
+    if (goalArea == null)
+        GD.PrintErr("[ERREUR] GoalArea introuvable !");
+    else
+        GD.Print($"[OK] GoalArea trouvée : {goalArea.GetPath()}");
+
+    // Penalty Spot
+    penaltySpot = GetNodeOrNull<Area2D>("PenaltySpot");
+    if (penaltySpot == null)
+        GD.PrintErr("[ERREUR] PenaltySpot introuvable !");
+    else
+        GD.Print($"[OK] PenaltySpot trouvé : {penaltySpot.GetPath()}");
+
+    // Goalkeeper Area
+    goalkeeperArea = GetNodeOrNull<Area2D>("GoalkeeperArea");
+    if (goalkeeperArea == null)
+        GD.PrintErr("[ERREUR] GoalkeeperArea introuvable !");
+    else
+        GD.Print($"[OK] GoalkeeperArea trouvée : {goalkeeperArea.GetPath()}");
+
+    GD.Print("=== FIN INITIALISATION ===");
+
+    // Sécurité : empêcher la suite si la balle est introuvable
+    if (gameBall == null)
     {
-        // Récupérer les références des nodes
-        playerShooter = GetNode<PenaltyShooter>("PlayerShooter");
-        playerGoalkeeper = GetNode<Goalkeeper>("PlayerGoalkeeper");
-        gameBall = GetNode<Ball>("Ball");
-        gameUI = GetNode<GameUI>("UI/GameUI");
-        opponentAI = GetNode<OpponentAI>("OpponentAI");
-        
-        goalArea = GetNode<Area2D>("Goal/GoalArea");
-        penaltySpot = GetNode<Area2D>("PenaltySpot");
-        goalkeeperArea = GetNode<Area2D>("GoalkeeperArea");
-        
-        // Initialiser les composants
-        playerShooter.SetCanShoot(false);
-        playerGoalkeeper.SetCanMove(false);
-        gameBall.SetActive(false);
+        GD.PrintErr("Impossible de continuer : la balle n'est pas trouvée dans la scène !");
+        SetProcess(false);
+        return;
     }
 
-    private void ConnectSignals()
-    {
-        // Signaux du game manager
-        GameManager.Instance.Connect(GameManager.SignalName.GameStateChanged, Callable.From<int>(OnGameStateChanged));
-        GameManager.Instance.Connect(GameManager.SignalName.GameFinished, Callable.From<Team>(OnGameFinished));
+    // Activer le tir et le mouvement
+    playerShooter?.SetCanShoot(true);
+    playerGoalkeeper?.SetCanMove(true);
+    gameBall?.SetActive(true);
+}
 
+
+     private void ConnectSignals()
+    {
+        GD.Print("Connecting signals...");
         
-        // Signaux du tireur
-        playerShooter.ShotTaken += OnPlayerShotTaken;
+        // Signaux du game manager
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.Connect(GameManager.SignalName.GameStateChanged, Callable.From<int>(OnGameStateChanged));
+            GameManager.Instance.Connect(GameManager.SignalName.GameFinished, Callable.From<Team>(OnGameFinished));
+        }
+        
+        // Signaux du tireur - CONNECTION CRITIQUE
+        if (playerShooter != null)
+        {
+            playerShooter.Connect("ShotTaken", Callable.From<Vector2, float>(OnPlayerShotTaken));
+            GD.Print("PlayerShooter signal connected");
+        }
+        else
+        {
+            GD.Print("ERROR: playerShooter is null!");
+        }
         
         // Signaux du ballon
-        gameBall.GoalScored += OnGoalScored;
-        gameBall.ShotMissed += OnShotMissed;
-        gameBall.BallStopped += OnBallStopped;
+        if (gameBall != null)
+        {
+            gameBall.Connect("GoalScored", Callable.From(OnGoalScored));
+            gameBall.Connect("ShotMissed", Callable.From(OnShotMissed));
+            gameBall.Connect("BallStopped", Callable.From(OnBallStopped));
+            GD.Print("Ball signals connected");
+        }
+        else
+        {
+            GD.Print("ERROR: gameBall is null!");
+        }
         
         // Signaux de la zone de but
-        goalArea.BodyEntered += OnGoalAreaEntered;
+        if (goalArea != null)
+        {
+            goalArea.Connect("body_entered", Callable.From<Node2D>(_on_goal_area_body_entered));
+            GD.Print("Goal area signal connected");
+        }
+        else
+        {
+            GD.Print("ERROR: goalArea is null!");
+        }
     }
-
-    private void SetupGame()
+    
+    private void _on_goal_area_body_entered(Node2D body)
     {
-        // Démarrer le jeu
-        GameManager.Instance.StartPenaltySession();
+        GD.Print($"Body entered goal: {body.Name}");
+        
+        if (body == gameBall && gameBall.Visible)
+        {
+            GD.Print("Ball entered goal!");
+            gameBall.OnGoalAreaEntered();
+        }
+    }
+   private void SetupGame()
+    {
+        GD.Print("Setting up game...");
+        
+        // FORCER le mode tir directement pour bypass le GameManager
+        GD.Print("Force starting direct shooting mode");
+        waitingForInput = true;
+        playerShooter.SetCanShoot(true);
+        GD.Print($"waitingForInput set to: {waitingForInput}");
+        
+        // Démarrer le jeu (optionnel)
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.StartPenaltySession();
+        }
         
         // Configurer la difficulté de l'IA
-        if (SettingsManager.Instance != null)
+        if (SettingsManager.Instance != null && opponentAI != null)
         {
             opponentAI.SetDifficulty(SettingsManager.Instance.AIDifficulty);
         }
@@ -119,7 +234,14 @@ public partial class PenaltyGameController : Node2D
         
         // Positionner le ballon et le tireur
         ResetBallPosition();
-        playerShooter.Position = penaltySpot.Position;
+        
+        // S'assurer que le tireur est à la bonne position
+        if (penaltySpot != null)
+        {
+            playerShooter.Position = penaltySpot.Position;
+            GD.Print($"Player shooter positioned at: {playerShooter.Position}");
+        }
+        
         playerShooter.SetCanShoot(true);
         
         // Jouer le son de sifflet
@@ -127,8 +249,8 @@ public partial class PenaltyGameController : Node2D
         
         // Attendre le tir du joueur
         waitingForInput = true;
+        GD.Print("Waiting for player input...");
     }
-
     private async Task HandleOpponentShooting()
     {
         GD.Print("Tour de l'adversaire - Tir");
@@ -217,35 +339,35 @@ public partial class PenaltyGameController : Node2D
 
     private async void OnPlayerShotTaken(Vector2 direction, float power)
     {
-        if (!waitingForInput) return;
+        GD.Print($"OnPlayerShotTaken called! Direction: {direction}, Power: {power}");
+        GD.Print($"waitingForInput state: {waitingForInput}");
         
+        // SUPPRIMER temporairement cette vérification pour le debug
+        /*
+        if (!waitingForInput) 
+        {
+            GD.Print("Not waiting for input, ignoring shot");
+            return;
+        }
+        */
+        
+        // Forcer l'acceptation du tir
         waitingForInput = false;
         playerShooter.SetCanShoot(false);
         
         // Jouer le son de frappe
         SoundManager.Instance?.PlaySFX("kick");
         
-        // Tirer le ballon
+        // TIRER LE BALLON
+        GD.Print("Shooting ball...");
         gameBall.ShootBall(direction, power);
         
-        // L'IA du gardien adverse tente l'arrêt
-        bool saved = await opponentAI.AttemptSave(direction, power);
-        
-        // Si le ballon n'a pas été sauvé et qu'il va vers le but
-        if (!saved && IsDirectionTowardsGoal(direction))
-        {
-            // Le but sera compté par OnGoalAreaEntered
-        }
-        else if (saved)
-        {
-            // Arrêt réussi
-            OnShotSaved();
-        }
-        else
-        {
-            // Tir à côté
-            OnShotMissed();
-        }
+        // Réactiver après 3 secondes pour permettre un nouveau tir
+        GetTree().CreateTimer(3.0f).Timeout += () => {
+            waitingForInput = true;
+            playerShooter.SetCanShoot(true);
+            GD.Print("Ready for next shot");
+        };
     }
 
     private bool IsDirectionTowardsGoal(Vector2 direction)
@@ -295,6 +417,7 @@ public partial class PenaltyGameController : Node2D
         GameManager.Instance.CompleteShot(false);
     }
 
+   
     private void OnBallStopped()
     {
         // Le ballon s'est arrêté sans but
@@ -362,17 +485,44 @@ public partial class PenaltyGameController : Node2D
 
     // Méthodes utilitaires pour debugging
     public override void _Input(InputEvent @event)
+    
     {
         if (@event is InputEventKey keyEvent && keyEvent.Pressed)
         {
-            // Raccourcis de debug (à supprimer en production)
             switch (keyEvent.Keycode)
             {
+                case Key.Space:
+                    // Test direct du tir
+                    GD.Print("SPACE pressed - Direct ball test");
+                    GD.Print($"Ball position before: {gameBall.Position}");
+                    GD.Print($"Ball freeze state before: {gameBall.Freeze}");
+                    GD.Print($"Ball visible: {gameBall.Visible}");
+                    gameBall.ShootBall(Vector2.Up, 50.0f);
+                    break;
+
+                case Key.T:
+                    // Test du signal du tireur
+                    GD.Print("T pressed - Testing shooter signal");
+                    OnPlayerShotTaken(Vector2.Up, 50.0f);
+                    break;
+
+                case Key.I:
+                    // Activer le mode input
+                    GD.Print("I pressed - Enabling input mode");
+                    waitingForInput = true;
+                    playerShooter.SetCanShoot(true);
+                    break;
+
+                case Key.D:
+                    // Debug ball state
+                    GD.Print($"Ball Debug - Position: {gameBall.Position}, Velocity: {gameBall.LinearVelocity}, Freeze: {gameBall.Freeze}, Visible: {gameBall.Visible}");
+                    break;
+
                 case Key.R:
                     // Restart le jeu
                     GetTree().ReloadCurrentScene();
                     break;
-                    
+
                 case Key.Escape:
                     // Retour au menu
                     GetTree().ChangeSceneToFile("res://scenes/Main.tscn");

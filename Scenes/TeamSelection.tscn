@@ -20,19 +20,24 @@ script = ExtResource("1_q3i6s")
 
 [node name="Background" type="TextureRect" parent="TeamSelectionUI"]
 layout_mode = 0
-offset_left = -405.0
-offset_top = -140.0
-offset_right = 555.0
-offset_bottom = 340.0
+offset_left = -384.0
+offset_top = -121.0
+offset_right = 576.0
+offset_bottom = 359.0
 texture = ExtResource("2_stu7j")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TeamSelectionUI"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = -117.0
+offset_top = -39.0
+offset_right = 283.0
+offset_bottom = 23.0
 
 [node name="TitleLabel" type="Label" parent="TeamSelectionUI/VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.108175, 0.554961, 0.885322, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
 text = "Sélection des équipes"
 horizontal_alignment = 1
 
@@ -42,17 +47,22 @@ layout_mode = 2
 [node name="PlayerTeamPanel" type="Panel" parent="TeamSelectionUI/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/PlayerTeamPanel"]
+[node name="SelectedTeamLabel2" type="Label" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/PlayerTeamPanel"]
 layout_mode = 2
-offset_right = 100.0
-offset_bottom = 23.0
+offset_left = -95.0
+offset_top = 69.0
+offset_right = 5.0
+offset_bottom = 92.0
+theme_override_colors/font_color = Color(3.56168e-06, 0.615319, 1.73271e-06, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Votre équipe"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/PlayerTeamPanel"]
 layout_mode = 2
-offset_top = 27.0
-offset_right = 100.0
-offset_bottom = 27.0
+offset_left = -163.0
+offset_top = 137.0
+offset_right = 152.0
+offset_bottom = 356.0
 
 [node name="GridContainer" type="GridContainer" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/PlayerTeamPanel/ScrollContainer"]
 layout_mode = 2
@@ -62,23 +72,32 @@ columns = 2
 
 [node name="SelectedTeamLabel" type="Label" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/PlayerTeamPanel"]
 layout_mode = 2
-offset_top = 31.0
-offset_right = 100.0
-offset_bottom = 54.0
+offset_left = -124.0
+offset_top = 101.0
+offset_right = 26.0
+offset_bottom = 130.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "SelectedTeamLabel "
 
 [node name="OpponentTeamPanel" type="Panel" parent="TeamSelectionUI/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/OpponentTeamPanel"]
+[node name="SelectedTeamLabel2" type="Label" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/OpponentTeamPanel"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 333.0
+offset_top = 77.0
+offset_right = 499.0
+offset_bottom = 105.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "Équipe adverse"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/OpponentTeamPanel"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 283.0
+offset_top = 134.0
+offset_right = 575.0
+offset_bottom = 341.0
 scroll_horizontal_custom_step = 1.0
 
 [node name="GridContainer" type="GridContainer" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/OpponentTeamPanel/ScrollContainer"]
@@ -89,10 +108,18 @@ columns = 2
 
 [node name="SelectedTeamLabel" type="Label" parent="TeamSelectionUI/VBoxContainer/HBoxContainer/OpponentTeamPanel"]
 layout_mode = 2
-offset_right = 154.0
-offset_bottom = 23.0
+offset_left = 319.0
+offset_top = 106.0
+offset_right = 473.0
+offset_bottom = 129.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "SelectedTeamLabel "
 
 [node name="StartGameButton" type="Button" parent="TeamSelectionUI/VBoxContainer"]
 layout_mode = 2
 text = " Démarrer la partie"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(106, 107)
+scale = Vector2(0.700885, 1.42909)
+zoom = Vector2(1.58, 1.58)

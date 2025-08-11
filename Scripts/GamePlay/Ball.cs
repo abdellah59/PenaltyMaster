@@ -106,7 +106,7 @@ public partial class Ball : RigidBody2D
         // Désactiver la balle
         SetActive(false);
         stopCheckTimer.Stop();
-        
+         
         GD.Print($"Ball position after reset: {GlobalPosition}");
     }
 

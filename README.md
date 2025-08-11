@@ -6,7 +6,7 @@
 ###
 ## Game design document 
 
-Vuillez trouvez ci-dessous le GDD : document détaillant tous les aspects du jeu : gameplay : [**Lien - GDD**](https://github.com/Othman59/PenaltyMaster/blob/feature/structure/Docx/Penalty%20Master%20(Godot%20Engine).pdf)
+Veuillez trouvez ci-dessous le GDD : document détaillant tous les aspects du jeu : gameplay : [**Lien - GDD**](https://github.com/Othman59/PenaltyMaster/blob/feature/structure/Docx/Penalty%20Master%20(Godot%20Engine).pdf)
 
 Fonctionnalités
 ###

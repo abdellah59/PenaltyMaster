@@ -15,7 +15,8 @@ public partial class Ball : RigidBody2D
     {
         GD.Print("Ball ready");
 
-        startPosition = Position;
+        // Sauvegarder la position de départ
+        startPosition = GlobalPosition;
 
         // Timer pour vérifier si la balle est arrêtée
         stopCheckTimer = new Timer
@@ -27,7 +28,6 @@ public partial class Ball : RigidBody2D
         AddChild(stopCheckTimer);
 
         SetActive(false);
-        
     }
 
     public void ShootBall(Vector2 direction, float power)
@@ -79,7 +79,6 @@ public partial class Ball : RigidBody2D
         if (!isActive) return;
 
         float velocity = LinearVelocity.Length();
-        // GD.Print($"Ball velocity: {velocity}");
 
         if (velocity < 5.0f) // seuil de vitesse pour considérer la balle arrêtée
         {
@@ -87,18 +86,36 @@ public partial class Ball : RigidBody2D
             stopCheckTimer.Stop();
             EmitSignal(SignalName.BallStopped);
 
-            GetTree().CreateTimer(1.0f).Timeout += ResetBall;
+            // Réinitialiser après un délai plus court
+            GetTree().CreateTimer(0.5f).Timeout += ResetBall;
         }
     }
 
     public void ResetBall()
     {
-        GD.Print("Ball reset");
-        Position = startPosition;
+        GD.Print($"Ball reset - Moving from {GlobalPosition} to {startPosition}");
+        
+        // Arrêter toute physique
+        Freeze = true;
         LinearVelocity = Vector2.Zero;
         AngularVelocity = 0.0f;
+        
+        // Repositionner à la position de départ
+        GlobalPosition = startPosition;
+        
+        // Désactiver la balle
         SetActive(false);
         stopCheckTimer.Stop();
+        
+        GD.Print($"Ball position after reset: {GlobalPosition}");
+    }
+
+    // Nouvelle méthode pour repositionner manuellement la balle
+    public void SetPosition(Vector2 newPosition)
+    {
+        startPosition = newPosition;
+        GlobalPosition = newPosition;
+        GD.Print($"Ball position manually set to: {GlobalPosition}");
     }
 
     public void SetActive(bool active)
@@ -109,7 +126,12 @@ public partial class Ball : RigidBody2D
         if (active)
         {
             Freeze = false;
-            GD.Print("Ball unfreezed");
+            GD.Print("Ball activated and unfreezed");
+        }
+        else
+        {
+            Freeze = true;
+            GD.Print("Ball deactivated and freezed");
         }
 
         GD.Print($"Ball active: {active}, Freeze: {Freeze}");
@@ -122,7 +144,9 @@ public partial class Ball : RigidBody2D
             GD.Print("Goal scored from ball!");
             EmitSignal(SignalName.GoalScored);
             stopCheckTimer.Stop();
-            GetTree().CreateTimer(0.5f).Timeout += ResetBall;
+            
+            // Réinitialiser immédiatement après un but
+            GetTree().CreateTimer(1.0f).Timeout += ResetBall;
         }
     }
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://5l3yh3idq2ll"]
+[gd_scene load_steps=22 format=3 uid="uid://5l3yh3idq2ll"]
 
 [ext_resource type="Script" uid="uid://s6d1q4d4edue" path="res://Scripts/GamePlay/PenaltyGameController.cs" id="1_xunwj"]
 [ext_resource type="Texture2D" uid="uid://ckbggtolntycv" path="res://Assets/MainMenu/TerrainGoal-PenaltyGameBackground.jpg" id="2_xunwj"]
@@ -6,8 +6,140 @@
 [ext_resource type="Texture2D" uid="uid://c1frg371v6inm" path="res://Assets/Soccer-Ball-PNG-Photo.png" id="4_brpm0"]
 [ext_resource type="Script" uid="uid://bmarixk4dbwgk" path="res://Scripts/GamePlay/PenaltyShooter.cs" id="5_wk84t"]
 [ext_resource type="Script" uid="uid://8wbnthllcbf8" path="res://Scripts/GamePlay/GoalKeeper.cs" id="6_xndba"]
+[ext_resource type="Texture2D" uid="uid://kkppk5vd5gb7" path="res://Assets/Gardien_de_but_semi-transparent.png" id="7_qgk27"]
 [ext_resource type="Script" uid="uid://erv1sq5gd6o2" path="res://Scripts/AI/OpponentAI.cs" id="7_xndba"]
+[ext_resource type="Texture2D" uid="uid://kpugpemoadw6" path="res://Assets/Joueur_de_football_en_uniforme_rouge.png" id="8_60wd3"]
 [ext_resource type="Script" uid="uid://bb77ecsvya780" path="res://Scripts/UI/GameUI.cs" id="8_qdi83"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xndba"]
+radius = 9.68963
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qgk27"]
+size = Vector2(221, 246)
+
+[sub_resource type="Animation" id="Animation_qgk27"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_qdi83"]
+resource_name = "dive_left"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.7, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-80, -20), Vector2(-120, 10), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.7, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, -0.261799, -0.436332, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.7, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.1, 0.9), Vector2(0.9, 1.1), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_60wd3"]
+resource_name = "dive_right"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.7, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(80, -20), Vector2(120, 10), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.7, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.261799, 1.26536, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.7, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.1, 0.9), Vector2(0.9, 1.1), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qgk27"]
+_data = {
+&"RESET": SubResource("Animation_qgk27"),
+&"dive_left": SubResource("Animation_qdi83"),
+&"dive_right": SubResource("Animation_60wd3")
+}
 
 [sub_resource type="Gradient" id="Gradient_qgk27"]
 
@@ -15,30 +147,13 @@
 gradient = SubResource("Gradient_qgk27")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vurjv"]
-size = Vector2(34.6, 28.4)
+size = Vector2(29.15, 24.8)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wk84t"]
-size = Vector2(56.95, 31.7)
+size = Vector2(2.5, 7.19999)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xndba"]
-size = Vector2(633, 278)
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_xndba"]
-radius = 9.68963
-
-[sub_resource type="Gradient" id="Gradient_qdi83"]
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_qgk27"]
-gradient = SubResource("Gradient_qdi83")
-
-[sub_resource type="Gradient" id="Gradient_xndba"]
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_qdi83"]
-gradient = SubResource("Gradient_xndba")
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qdi83"]
-radius = 77.0
-height = 220.0
+size = Vector2(125, 207.5)
 
 [node name="PenaltyGame" type="Node2D"]
 position = Vector2(620, 309)
@@ -49,35 +164,6 @@ position = Vector2(-41, 17)
 scale = Vector2(1.90333, 1.61)
 texture = ExtResource("2_xunwj")
 
-[node name="Goal" type="Node2D" parent="."]
-
-[node name="GoalSprite" type="Sprite2D" parent="Goal"]
-position = Vector2(-40, 23.5)
-scale = Vector2(2.86719, 317)
-texture = SubResource("GradientTexture1D_60wd3")
-
-[node name="GoalArea" type="Area2D" parent="Goal" groups=["goal"]]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Goal/GoalArea"]
-position = Vector2(-41, 27)
-scale = Vector2(20, 10)
-shape = SubResource("RectangleShape2D_vurjv")
-one_way_collision_margin = 0.0
-
-[node name="PenaltySpot" type="Area2D" parent="."]
-position = Vector2(0, 150)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PenaltySpot"]
-position = Vector2(-39.5, 107.75)
-scale = Vector2(20, 5)
-shape = SubResource("RectangleShape2D_wk84t")
-
-[node name="GoalkeeperArea" type="Area2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="GoalkeeperArea"]
-position = Vector2(-34.5, 38)
-shape = SubResource("RectangleShape2D_xndba")
-
 [node name="Ball" type="RigidBody2D" parent="."]
 position = Vector2(-39, 312)
 input_pickable = true
@@ -86,59 +172,88 @@ linear_damp = 10.0
 script = ExtResource("3_apvd0")
 
 [node name="Sprite2D" type="Sprite2D" parent="Ball"]
-position = Vector2(-8.99998, -4.99999)
 scale = Vector2(0.0527344, 0.0559896)
 texture = ExtResource("4_brpm0")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ball"]
-position = Vector2(-11, -5)
 scale = Vector2(3, 3)
 shape = SubResource("CircleShape2D_xndba")
+
+[node name="PlayerGoalkeeper" type="CharacterBody2D" parent="."]
+script = ExtResource("6_xndba")
+
+[node name="Sprite2D" type="Sprite2D" parent="PlayerGoalkeeper"]
+position = Vector2(-47.28, 54.54)
+scale = Vector2(0.308047, 0.336992)
+texture = ExtResource("7_qgk27")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerGoalkeeper"]
+position = Vector2(-36.78, 49.54)
+shape = SubResource("RectangleShape2D_qgk27")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerGoalkeeper"]
+libraries = {
+&"": SubResource("AnimationLibrary_qgk27")
+}
+
+[node name="Goal" type="Node2D" parent="."]
+
+[node name="GoalSprite" type="Sprite2D" parent="Goal"]
+visible = false
+position = Vector2(-40, 23.5)
+scale = Vector2(2.86719, 317)
+texture = SubResource("GradientTexture1D_60wd3")
+
+[node name="GoalArea" type="Area2D" parent="Goal"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Goal/GoalArea"]
+visible = false
+position = Vector2(-38.5, 16)
+scale = Vector2(20, 10)
+shape = SubResource("RectangleShape2D_vurjv")
+one_way_collision_margin = 0.0
+
+[node name="PenaltySpot" type="Area2D" parent="."]
+position = Vector2(-44, 311)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PenaltySpot"]
+position = Vector2(3.00003, -0.999992)
+scale = Vector2(20, 5)
+shape = SubResource("RectangleShape2D_wk84t")
+
+[node name="GoalkeeperArea" type="Area2D" parent="."]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GoalkeeperArea"]
+position = Vector2(-48.5, 66.75)
+shape = SubResource("RectangleShape2D_xndba")
 
 [node name="PlayerShooter" type="Node2D" parent="."]
 position = Vector2(-148, 256)
 script = ExtResource("5_wk84t")
 
 [node name="Sprite2D" type="Sprite2D" parent="PlayerShooter"]
-position = Vector2(-2.49996, -8.1875)
-scale = Vector2(0.277344, 177.625)
-texture = SubResource("GradientTexture1D_qgk27")
+position = Vector2(-18, -45)
+scale = Vector2(0.949346, 0.980392)
+texture = ExtResource("8_60wd3")
 
 [node name="AimLine" type="Line2D" parent="PlayerShooter"]
-position = Vector2(92, -116)
-points = PackedVector2Array(-130, 18, -60, 18, -61, 74, -60, 196, -129, 196, -130, 18)
+position = Vector2(100, 60)
+scale = Vector2(1, 1.51087)
+points = PackedVector2Array(4, -1.32376)
 width = 3.0
 
 [node name="PowerBar" type="ProgressBar" parent="PlayerShooter"]
-offset_left = -150.0
-offset_top = 40.0
-offset_right = -80.0
-offset_bottom = 67.0
+offset_left = -261.0
+offset_top = 41.0
+offset_right = -61.0
+offset_bottom = 68.0
 metadata/_edit_use_anchors_ = true
-
-[node name="PlayerGoalkeeper" type="CharacterBody2D" parent="."]
-visible = false
-position = Vector2(-34, 101)
-script = ExtResource("6_xndba")
-moveSpeed = null
-reactionTime = null
-
-[node name="Sprite2D" type="Sprite2D" parent="PlayerGoalkeeper"]
-position = Vector2(8.49999, -28.875)
-scale = Vector2(0.355468, 208.25)
-texture = SubResource("GradientTexture1D_qdi83")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerGoalkeeper"]
-position = Vector2(6, -31)
-shape = SubResource("CapsuleShape2D_qdi83")
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerGoalkeeper"]
 
 [node name="OpponentAI" type="Node" parent="."]
 script = ExtResource("7_xndba")
 
 [node name="UI" type="Control" parent="."]
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -281,3 +396,4 @@ zoom = Vector2(1.295, 1.295)
 [connection signal="GoalScored" from="Ball" to="." method="_on_ball_goal_scored"]
 [connection signal="ShotMissed" from="Ball" to="." method="_on_ball_shot_missed"]
 [connection signal="ShotTaken" from="PlayerShooter" to="PlayerShooter" method="OnPlayerShotTaken"]
+[connection signal="focus_entered" from="UI/GameUI" to="." method="_on_game_ui_focus_entered"]

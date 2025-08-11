@@ -8,7 +8,7 @@ public partial class PenaltyGameController : Node2D
     
     // Références des nodes
     private PenaltyShooter playerShooter;
-    private Goalkeeper playerGoalkeeper;
+    private GoalKeeper playerGoalkeeper;
     private Ball gameBall;
     private GameUI gameUI;
     private OpponentAI opponentAI;
@@ -48,15 +48,15 @@ public partial class PenaltyGameController : Node2D
     else
         GD.Print($"[OK] PlayerShooter trouvé : {playerShooter.GetPath()}");
 
-    // Player goalkeeper
-    playerGoalkeeper = GetNodeOrNull<Goalkeeper>("PlayerGoalkeeper");
+    // Player goalkeeper - CORRECTION ICI !
+    playerGoalkeeper = GetNodeOrNull<GoalKeeper>("PlayerGoalkeeper");
     if (playerGoalkeeper == null)
         GD.PrintErr("[ERREUR] PlayerGoalkeeper introuvable !");
     else
         GD.Print($"[OK] PlayerGoalkeeper trouvé : {playerGoalkeeper.GetPath()}");
 
     // Ball
-    gameBall = GetNodeOrNull<Ball>("Ball"); // ⚠️ Mets le bon chemin ici si elle est dans un sous-nœud
+    gameBall = GetNodeOrNull<Ball>("Ball");
     if (gameBall == null)
         GD.PrintErr("[ERREUR] Ball introuvable ! Vérifie le chemin dans InitializeReferences()");
     else
@@ -99,10 +99,10 @@ public partial class PenaltyGameController : Node2D
 
     GD.Print("=== FIN INITIALISATION ===");
 
-    // Sécurité : empêcher la suite si la balle est introuvable
-    if (gameBall == null)
+    // Sécurité : empêcher la suite si des éléments critiques manquent
+    if (gameBall == null || playerGoalkeeper == null)
     {
-        GD.PrintErr("Impossible de continuer : la balle n'est pas trouvée dans la scène !");
+        GD.PrintErr("Impossible de continuer : éléments critiques manquants !");
         SetProcess(false);
         return;
     }
@@ -340,34 +340,24 @@ public partial class PenaltyGameController : Node2D
     private async void OnPlayerShotTaken(Vector2 direction, float power)
     {
         GD.Print($"OnPlayerShotTaken called! Direction: {direction}, Power: {power}");
-        GD.Print($"waitingForInput state: {waitingForInput}");
         
-        // SUPPRIMER temporairement cette vérification pour le debug
-        /*
-        if (!waitingForInput) 
-        {
-            GD.Print("Not waiting for input, ignoring shot");
-            return;
-        }
-        */
-        
-        // Forcer l'acceptation du tir
         waitingForInput = false;
         playerShooter.SetCanShoot(false);
         
         // Jouer le son de frappe
         SoundManager.Instance?.PlaySFX("kick");
         
+        // NOUVEAU: Déclencher l'animation du gardien EN MÊME TEMPS que le tir
+        if (playerGoalkeeper != null)
+        {
+            GD.Print("Triggering goalkeeper animation...");
+            // Le gardien réagit à la direction et puissance du tir
+            playerGoalkeeper.AttemptSave(direction, power);
+        }
+        
         // TIRER LE BALLON
         GD.Print("Shooting ball...");
         gameBall.ShootBall(direction, power);
-        
-        // Réactiver après 3 secondes pour permettre un nouveau tir
-        GetTree().CreateTimer(3.0f).Timeout += () => {
-            waitingForInput = true;
-            playerShooter.SetCanShoot(true);
-            GD.Print("Ready for next shot");
-        };
     }
 
     private bool IsDirectionTowardsGoal(Vector2 direction)
@@ -397,8 +387,19 @@ public partial class PenaltyGameController : Node2D
         // Créer un effet visuel
         ShowGoalEffect();
         
+        // Attendre avant de repositionner
+        GetTree().CreateTimer(2.0f).Timeout += () => {
+            // Repositionner la balle pour le prochain tir
+            ResetBallPosition();
+            
+            // Réactiver le mode tir
+            waitingForInput = true;
+            playerShooter.SetCanShoot(true);
+            GD.Print("Ready for next shot after goal");
+        };
+        
         // Compléter le tir
-        GameManager.Instance.CompleteShot(true);
+        GameManager.Instance?.CompleteShot(true);
     }
 
     private void OnShotSaved()
@@ -420,8 +421,21 @@ public partial class PenaltyGameController : Node2D
    
     private void OnBallStopped()
     {
-        // Le ballon s'est arrêté sans but
-        if (gameInProgress && waitingForInput)
+        GD.Print("Ball stopped - preparing for next shot");
+        
+        // Attendre un peu avant de repositionner
+        GetTree().CreateTimer(1.0f).Timeout += () => {
+            // Repositionner la balle
+            ResetBallPosition();
+            
+            // Réactiver le mode tir
+            waitingForInput = true;
+            playerShooter.SetCanShoot(true);
+            GD.Print("Ready for next shot");
+        };
+        
+        // Si c'est pendant le jeu normal, traiter comme tir manqué
+        if (gameInProgress)
         {
             OnShotMissed();
         }
@@ -429,9 +443,23 @@ public partial class PenaltyGameController : Node2D
 
     private void ResetBallPosition()
     {
-        gameBall.Position = penaltySpot.Position;
+        if (gameBall == null || penaltySpot == null) return;
+        
+        GD.Print($"Resetting ball position from {gameBall.GlobalPosition} to penalty spot {penaltySpot.GlobalPosition}");
+        
+        // Méthode 1: Utiliser la nouvelle méthode SetPosition
+        gameBall.SetPosition(penaltySpot.GlobalPosition);
+        
+        // Méthode 2: Reset complet
         gameBall.ResetBall();
+        
+        // Méthode 3: Forcer la position après reset
+        gameBall.GlobalPosition = penaltySpot.GlobalPosition;
+        
+        // Activer la balle
         gameBall.SetActive(true);
+        
+        GD.Print($"Ball position after reset: {gameBall.GlobalPosition}");
     }
 
     private void ShowGoalEffect()
@@ -526,6 +554,42 @@ public partial class PenaltyGameController : Node2D
                 case Key.Escape:
                     // Retour au menu
                     GetTree().ChangeSceneToFile("res://scenes/Main.tscn");
+                    break;
+
+                case Key.Key1:
+                    // Tester l'animation dive_left
+                    GD.Print("Testing dive_left animation");
+                    playerGoalkeeper?.TestAnimation("dive_left");
+                    break;
+
+                case Key.Key2:
+                    // Tester l'animation dive_right
+                    GD.Print("Testing dive_right animation");
+                    playerGoalkeeper?.TestAnimation("dive_right");
+                    break;
+
+                case Key.Key3:
+                    // Tester l'animation idle
+                    GD.Print("Testing idle animation");
+                    playerGoalkeeper?.TestAnimation("idle");
+                    break;
+
+                case Key.L:
+                    // Lister toutes les animations disponibles
+                    GD.Print("Listing goalkeeper animations:");
+                    playerGoalkeeper?.ListAvailableAnimations();
+                    break;
+
+                case Key.G:
+                    // Test complet d'arrêt vers la gauche
+                    GD.Print("Testing full save sequence (left)");
+                    playerGoalkeeper?.AttemptSave(Vector2.Left, 50.0f);
+                    break;
+
+                case Key.H:
+                    // Test complet d'arrêt vers la droite
+                    GD.Print("Testing full save sequence (right)");
+                    playerGoalkeeper?.AttemptSave(Vector2.Right, 50.0f);
                     break;
             }
         }

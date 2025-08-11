@@ -3,9 +3,14 @@
 ## Description
 ###
 **Penalty Master** est un jeu simple et amusant de tir au but où le joueur doit marquer des buts en tirant face à un gardien de but. Le but est d'enchaîner les tirs réussis et d'obtenir le meilleur score possible !
+###
+## Game design document 
+
+Vuillez trouvez ci-dessous le GDD : document détaillant tous les aspects du jeu : gameplay : [**Lien - GDD**](https://github.com/Othman59/PenaltyMaster/blob/feature/structure/Docx/Penalty%20Master%20(Godot%20Engine).pdf)
 
 Fonctionnalités
 ###
+
 Choix de la direction du tir (gauche, centre, droite)
 
 Gardien de but qui tente d’arrêter le ballon
@@ -27,8 +32,6 @@ Ouvrir le projet sur Godot (ou le fichier principal selon la plateforme) dans un
 ```
 
 ###
-
-
 Lancer le jeu et amusez-vous !
 ###
 

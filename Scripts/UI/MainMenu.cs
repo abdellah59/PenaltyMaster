@@ -20,7 +20,7 @@ public partial class MainMenu : Control
         playButton.Pressed += OnPlayPressed;
         quitButton.Pressed += OnQuitPressed;
         
-        titleLabel.Text = "🏆 TIRS AU BUT 🏆\nCoupe du Monde";
+        titleLabel.Text = "🏆 PENALTY MASTER 🏆\nTirs au But";
         playButton.Text = "JOUER";
         quitButton.Text = "QUITTER";
         

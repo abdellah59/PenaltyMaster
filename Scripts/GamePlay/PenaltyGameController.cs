@@ -21,7 +21,7 @@ public partial class PenaltyGameController : Node2D
     // État du jeu
     private bool waitingForInput = false;
     private bool gameInProgress = false;
-    private bool gameFinished = false; // NOUVEAU: Variable pour indiquer si le jeu est terminé
+    private bool gameFinished = false; //  Variable pour indiquer si le jeu est terminé
 
     public override void _Ready()
     {
@@ -178,7 +178,7 @@ public partial class PenaltyGameController : Node2D
     {
         GD.Print("Setting up game...");
         
-        gameFinished = false; // NOUVEAU: Initialiser l'état du jeu
+        gameFinished = false; //  Initialiser l'état du jeu
         
         // FORCER le mode tir directement pour bypass le GameManager
         GD.Print("Force starting direct shooting mode");
@@ -206,7 +206,7 @@ public partial class PenaltyGameController : Node2D
         gameInProgress = true;
     }
 
-    // NOUVELLE MÉTHODE: Vérifier si le jeu doit se terminer
+    //MÉTHODE: Vérifier si le jeu doit se terminer
     private bool ShouldEndScoreAttack()
     {
         if (gameUI != null)
@@ -216,7 +216,7 @@ public partial class PenaltyGameController : Node2D
         return false;
     }
 
-    // NOUVELLE MÉTHODE: Terminer le jeu Score Attack
+    // MÉTHODE: Terminer le jeu Score Attack
     private void EndScoreAttack()
     {
         GD.Print("Score Attack terminé!");
@@ -233,7 +233,7 @@ public partial class PenaltyGameController : Node2D
 
     private async void OnGameStateChanged(int stateInt)
     {
-        if (gameFinished) return; // NOUVEAU: Ne pas traiter les changements d'état si le jeu est fini
+        if (gameFinished) return; // Ne pas traiter les changements d'état si le jeu est fini
         
         var state = (GameManager.GameState)stateInt;
         
@@ -243,31 +243,15 @@ public partial class PenaltyGameController : Node2D
                 await HandlePlayerShooting();
                 break;
                 
-            case GameManager.GameState.OpponentShooting:
-                await HandleOpponentShooting();
-                break;
-                
-            case GameManager.GameState.GoalkeepingPlayerTurn:
-                await HandlePlayerGoalkeeping();
-                break;
-                
-            case GameManager.GameState.GoalkeepingOpponentTurn:
-                await HandleOpponentGoalkeeping();
-                break;
-                
-            case GameManager.GameState.RoundEnd:
-                await HandleRoundEnd();
-                break;
-                
-            case GameManager.GameState.GameEnd:
-                HandleGameEnd();
-                break;
+          
+            
+           
         }
     }
 
     private async Task HandlePlayerShooting()
     {
-        if (gameFinished) return; // NOUVEAU: Ne pas permettre de nouveau tir si le jeu est fini
+        if (gameFinished) return; // Ne pas permettre de nouveau tir si le jeu est fini
         
         GD.Print("Tour du joueur - Tir");
         
@@ -291,77 +275,15 @@ public partial class PenaltyGameController : Node2D
         GD.Print("Waiting for player input...");
     }
 
-    private async Task HandleOpponentShooting()
-    {
-        if (gameFinished) return;
-        
-        GD.Print("Tour de l'adversaire - Tir");
-        
-        // Positionner le gardien du joueur
-        playerGoalkeeper.Position = goalkeeperArea.Position;
-        playerGoalkeeper.SetCanMove(true);
-        
-        // L'IA tire
-        bool scored = await opponentAI.TakeShot();
-        
-        // Désactiver le gardien
-        playerGoalkeeper.SetCanMove(false);
-        
-        // Jouer les effets sonores
-        if (scored)
-        {
-            SoundManager.Instance?.PlaySFX("goal");
-            SoundManager.Instance?.PlaySFX("crowd_cheer");
-        }
-        else
-        {
-            SoundManager.Instance?.PlaySFX("save");
-            SoundManager.Instance?.PlaySFX("crowd_disappointed");
-        }
-        
-        // Compléter le tir
-        GameManager.Instance.CompleteShot(scored);
-    }
+    
 
-    private async Task HandlePlayerGoalkeeping()
-    {
-        if (gameFinished) return;
-        
-        GD.Print("Tour du joueur - Gardien");
-        await Task.Delay(100);
-    }
-
-    private async Task HandleOpponentGoalkeeping()
-    {
-        if (gameFinished) return;
-        
-        GD.Print("Tour de l'adversaire - Gardien");
-        await Task.Delay(100);
-    }
-
-    private async Task HandleRoundEnd()
-    {
-        if (gameFinished) return;
-        
-        GD.Print("Fin de manche");
-        
-        // Afficher les résultats de la manche
-        ShowRoundResult();
-        
-        // Attendre avant de continuer
-        await ToSignal(GetTree().CreateTimer(2.0f), SceneTreeTimer.SignalName.Timeout);
-        
-        // Continuer vers le prochain état
-        if (GameData.Instance.CurrentRound <= GameData.Instance.MaxRounds)
-        {
-            GameManager.Instance.ChangeState(GameManager.GameState.PlayerShooting);
-        }
-    }
+   
+   
 
     private void HandleGameEnd()
     {
         GD.Print("Fin du jeu");
-        EndScoreAttack(); // NOUVEAU: Utiliser la nouvelle méthode
+        EndScoreAttack(); // Utiliser la nouvelle méthode
         
         // Jouer la musique de fin
         var gameData = GameData.Instance;
@@ -377,7 +299,7 @@ public partial class PenaltyGameController : Node2D
 
     private async void OnPlayerShotTaken(Vector2 direction, float power)
     {
-        // NOUVEAU: Vérifier si le jeu est terminé avant de traiter le tir
+        //  Vérifier si le jeu est terminé avant de traiter le tir
         if (gameFinished)
         {
             GD.Print("Game finished - ignoring shot");
@@ -392,7 +314,7 @@ public partial class PenaltyGameController : Node2D
         // Jouer le son de frappe
         SoundManager.Instance?.PlaySFX("kick");
         
-        // NOUVEAU: Déclencher l'animation du gardien EN MÊME TEMPS que le tir
+        //  Déclencher l'animation du gardien EN MÊME TEMPS que le tir
         if (playerGoalkeeper != null)
         {
             GD.Print("Triggering goalkeeper animation...");
@@ -404,7 +326,7 @@ public partial class PenaltyGameController : Node2D
         {
             gameUI.RegisterAttempt(); // Enregistre la tentative
             
-            // NOUVEAU: Vérifier si le jeu doit se terminer après cet essai
+            //  Vérifier si le jeu doit se terminer après cet essai
             if (ShouldEndScoreAttack())
             {
                 GD.Print("Maximum attempts reached!");
@@ -497,7 +419,7 @@ public partial class PenaltyGameController : Node2D
         {
             gameUI.RegisterMiss(); // Enregistre le tir manqué
             
-            // NOUVEAU: Vérifier si c'était le dernier essai
+            // : Vérifier si c'était le dernier essai
             if (ShouldEndScoreAttack())
             {
                 EndScoreAttack();
@@ -514,7 +436,7 @@ public partial class PenaltyGameController : Node2D
         {
             gameUI.RegisterSave(); // Enregistre l'arrêt
             
-            // NOUVEAU: Vérifier si c'était le dernier essai
+            //  Vérifier si c'était le dernier essai
             if (ShouldEndScoreAttack())
             {
                 EndScoreAttack();
@@ -522,7 +444,7 @@ public partial class PenaltyGameController : Node2D
             }
         }
 
-        // NOUVEAU: Ne préparer le prochain tir que si le jeu n'est pas fini
+        // Ne préparer le prochain tir que si le jeu n'est pas fini
         if (!gameFinished)
         {
             // Attendre un peu avant de repositionner
